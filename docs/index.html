@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Publish your poster</title>
+<link rel="icon" href="favicon.ico"><link rel="stylesheet" href="assets/style.css">
+</head><body><main class="page">
+<header class="site-header">
+  <span class="wordmark">Poster<span class="mark-dot"></span></span>
+  <span class="header-note">CONFERENCE / POSTER</span>
+</header>
+
+<section class="poster-section">
+  <div class="intro">
+    <div>
+      <p class="eyebrow">SHARE YOUR WORK</p>
+      <h1>Publish your poster<span>.</span></h1>
+    </div>
+    <p class="intro-note">Fill in the form.<br>Get a page with a link to share.</p>
+  </div>
+
+  <form class="form-card" id="form" novalidate>
+    <p class="hp"><label>Do not fill <input id="bot" tabindex="-1" autocomplete="off"></label></p>
+
+    <div class="form-grid">
+      <div class="field"><label for="conf">Conference (acronym)</label>
+        <input id="conf" name="conference" type="text" placeholder="JFAC" list="conf-list" autocomplete="off" required>
+        <datalist id="conf-list"></datalist>
+        <span class="hint">Pick an existing conference or type a new one.</span></div>
+      <div class="field"><label for="year">Year</label>
+        <input id="year" name="annee" type="number" min="1990" max="2100" placeholder="2026" required></div>
+      <div class="field"><label for="prenom">First name</label>
+        <input id="prenom" name="prenom" type="text" autocomplete="given-name" required></div>
+      <div class="field"><label for="nom">Last name</label>
+        <input id="nom" name="nom" type="text" autocomplete="family-name" required></div>
+      <div class="field full"><label for="email">Contact e-mail (shown on the poster page)</label>
+        <input id="email" name="email" type="email" autocomplete="email" required></div>
+      <div class="field full"><label for="pdf">Poster (PDF)</label>
+        <input id="pdf" name="poster" type="file" accept="application/pdf,.pdf" required>
+        <span class="hint">PDF only, 6 MB maximum.</span></div>
+      <div class="field full"><label for="code">Access code</label>
+        <input id="code" name="code" type="text" autocomplete="off" placeholder="Provided by the organizers">
+        <span class="hint">Leave empty if you were not given a code.</span></div>
+      <div class="field full"><span class="lbl">Your poster page will be</span>
+        <div class="folder-preview" id="preview">/CONFERENCE_YEAR_LastName_FirstName</div></div>
+      <label class="check full"><input type="checkbox" name="consent" required>
+        <span>I agree to publish this poster and my contact e-mail on a public web page.</span></label>
+    </div>
+    <button class="submit" type="submit" id="send">Submit poster</button>
+    <p class="hint" id="status" role="status" style="margin-top:12px"></p>
+  </form>
+</section>
+
+<div class="page-footer"><span>POSTER</span><span>Thank you for sharing your work.</span></div>
+</main>
+<script src="config.js"></script>
+<script>
+  var $ = function (id) { return document.getElementById(id); };
+  var clean = function (s) { return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Za-z0-9]+/g, "-").replace(/^-+|-+$/g, ""); };
+  var cap = function (s) { return clean(s).split("-").map(function (w) { return w.charAt(0).toUpperCase() + w.slice(1); }).join("-"); };
+  function update() {
+    var f = [clean($("conf").value).toUpperCase() || "CONFERENCE", clean($("year").value) || "YEAR",
+             cap($("nom").value) || "LastName", cap($("prenom").value) || "FirstName"].join("_");
+    $("preview").textContent = "/" + f;
+  }
+  ["conf", "year", "nom", "prenom"].forEach(function (id) { $(id).addEventListener("input", update); });
+  $("pdf").addEventListener("change", function () {
+    if (this.files[0] && this.files[0].size > 6 * 1024 * 1024) { alert("The PDF is larger than 6 MB."); this.value = ""; }
+  });
+  update();
+
+  $("form").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var form = this, btn = $("send"), st = $("status"), file = $("pdf").files[0];
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+    if (!file || file.size > 6 * 1024 * 1024) { st.textContent = "Please choose a PDF under 6 MB."; return; }
+    btn.disabled = true; st.textContent = "Publishing… please wait.";
+    try {
+      var b64 = await new Promise(function (ok, ko) {
+        var r = new FileReader(); r.onload = function () { ok(String(r.result).split(",")[1]); }; r.onerror = ko; r.readAsDataURL(file);
+      });
+      var res = await fetch(window.WORKER_URL, { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ conference: $("conf").value, annee: $("year").value, nom: $("nom").value, prenom: $("prenom").value,
+          email: $("email").value, code: $("code").value, bot: $("bot").value, pdf: b64 }) });
+      var j = await res.json();
+      if (j.ok) { location.href = "merci.html?f=" + encodeURIComponent(j.folder); return; }
+      st.textContent = "Error: " + (j.error || "unknown error");
+    } catch (err) { st.textContent = "Network error. Please try again."; }
+    btn.disabled = false;
+  });
+
+  // Conférences déjà enregistrées (index : posters.json)
+  fetch("posters.json?" + Date.now()).then(function (r) { return r.ok ? r.json() : []; }).then(function (list) {
+    var seen = {}, dl = $("conf-list");
+    list.forEach(function (p) {
+      if (seen[p.conf]) return; seen[p.conf] = 1;
+      var o = document.createElement("option"); o.value = p.conf; dl.appendChild(o);
+    });
+  }).catch(function () {});
+  // Si la saisie correspond à une conférence connue (jfac), on adopte son orthographe
+  $("conf").addEventListener("change", function () {
+    var v = this.value.trim().toLowerCase();
+    Array.prototype.forEach.call($("conf-list").options, function (o) { if (o.value.toLowerCase() === v) $("conf").value = o.value; });
+    update();
+  });
+</script>
+</body></html>

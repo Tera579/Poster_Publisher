@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Thank you</title>
+<link rel="icon" href="favicon.ico"><link rel="stylesheet" href="assets/style.css">
+</head><body><main class="page">
+<header class="site-header"><a class="wordmark" href="index.html">Poster<span class="mark-dot"></span></a></header>
+<div class="merci"><h1>Thank you<span>.</span></h1>
+<p>Your poster has been received. Your page will be online in about one to two minutes:</p>
+<div class="link-row" id="row" hidden>
+  <a id="link" href="#"></a>
+  <button class="copy-btn" id="copy" type="button">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+    <span id="copy-label">Copy to clipboard</span>
+  </button>
+</div>
+<div class="qr-box" id="qr" hidden>
+  <div id="qr-svg" aria-label="QR code of the poster page"></div>
+  <p class="qr-caption">Scan to open the poster page</p>
+</div></div>
+<script src="assets/qrcode.js"></script>
+<script>
+  var f = new URLSearchParams(location.search).get("f") || "";
+  if (/^[A-Za-z0-9_-]+$/.test(f)) {
+    var url = new URL(f + "/", location.href).href;   // adresse complète de la page du poster
+    var a = document.getElementById("link");
+    a.href = url; a.textContent = url;
+    document.getElementById("row").hidden = false;
+
+    var label = document.getElementById("copy-label");
+    function done() { label.textContent = "Copied!"; setTimeout(function () { label.textContent = "Copy to clipboard"; }, 2000); }
+    document.getElementById("copy").addEventListener("click", function () {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(url).then(done, fallback);
+      } else { fallback(); }
+      function fallback() {
+        var t = document.createElement("textarea"); t.value = url; t.style.position = "fixed"; t.style.opacity = "0";
+        document.body.appendChild(t); t.select();
+        try { document.execCommand("copy"); done(); } catch (e) {}
+        document.body.removeChild(t);
+      }
+    });
+
+    try {
+      var qr = qrcode(0, "M"); qr.addData(url); qr.make();
+      document.getElementById("qr-svg").innerHTML = qr.createSvgTag({ cellSize: 6, margin: 0, scalable: true });
+      document.getElementById("qr").hidden = false;
+    } catch (e) {}
+  }
+</script>
+</main></body></html>

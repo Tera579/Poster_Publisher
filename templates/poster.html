@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Poster {CONF} {YEAR} – {PRENOM} {NOM}</title>
+<link rel="icon" href="../favicon.ico"><link rel="stylesheet" href="../assets/style.css">
+</head><body><main class="page">
+<header class="site-header">
+  <span class="wordmark">{PRENOM} {NOM}<span class="mark-dot"></span></span>
+  <div class="header-right">
+    <span class="header-note">{CONF} {YEAR} / POSTER</span>
+    <a class="publish-btn" href="../index.html">Publish your poster</a>
+  </div>
+</header>
+
+<section class="poster-section" style="padding-top:40px">
+  <div class="viewer" data-pdf="poster.pdf">
+    <div class="toolbar">
+      <div class="file-label">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+        <span>Poster <span class="file-type">/ PDF</span></span>
+      </div>
+      <div class="zoom-controls" aria-label="Poster zoom">
+        <button data-act="out" aria-label="Zoom out" title="Zoom out"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg></button>
+        <output aria-live="polite">100%</output>
+        <button data-act="in" aria-label="Zoom in" title="Zoom in"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button>
+        <span class="divider"></span>
+        <button data-act="fit" aria-label="Fit poster to width" title="Fit to width"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
+      </div>
+      <a class="download" aria-label="Download poster PDF" href="poster.pdf" download="Poster_{CONF}_{PRENOM_F}_{NOM_F}.pdf">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17V3"/><path d="m6 11 6 6 6-6"/><path d="M19 21H5"/></svg>
+        <span>Download PDF</span>
+      </a>
+    </div>
+    <div class="poster-stage" tabindex="0" aria-label="Poster viewer. Scroll to explore when zoomed in." aria-busy="true">
+      <div class="pages"></div>
+      <div class="empty-poster"><p>Loading poster…</p></div>
+    </div>
+    <div class="viewer-footer"><span data-foot>POSTER</span><span>{PRENOM} {NOM}</span></div>
+  </div>
+
+  <footer class="contact">
+    <p>Questions or ideas? <span>Let’s talk.</span></p>
+    <a href="mailto:{EMAIL}">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
+      <span>{EMAIL}</span>
+    </a>
+  </footer>
+</section>
+</main>
+<script src="../assets/viewer.js"></script>
+</body></html>

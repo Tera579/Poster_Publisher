@@ -10,6 +10,14 @@
   {
     "conf": "JFAC",
     "year": 2026,
+    "nom": "Mignot",
+    "prenom": "Maléna",
+    "folder": "JFAC_2026_Mignot_Malena",
+    "added": "2026-11-25"
+  },
+  {
+    "conf": "JFAC",
+    "year": 2026,
     "nom": "quinot",
     "prenom": "louis",
     "folder": "JFAC_2026_Quinot_Louis",
